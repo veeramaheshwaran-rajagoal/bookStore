@@ -1,0 +1,13 @@
+{
+  "editor.tabCompletion": "on",
+  "editor.tabSize": 4,
+  // "editor.trimAutoWhitespace": true,
+  "editor.formatOnSave": true,
+  // "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "eslint.run": "onSave",
+  "sonarlint.connectedMode.project": {
+    "connectionId": "http-157-245-111-76-9000",
+    "projectKey": "keydemand-node"
+  },
+}
