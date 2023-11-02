@@ -25,6 +25,6 @@ router.put(
 router.delete(
     '/deleteBook/:bookId', authentication, authorization('user'),
     validate(bookSchema.deleteBookSchema),
-    bookController.updateBook,
+    bookController.deleteBook,
 );
 module.exports = router;
