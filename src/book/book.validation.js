@@ -18,6 +18,15 @@ const getBookSchema = joi
         }),
     })
     .unknown(true);
+// Get the end - use schema.
+const getBooksSchema = joi
+    .object({
+        query: joi.object({
+            userId: joi.string().strict().trim().optional(),
+            type: joi.string().strict().trim().optional(),
+        }),
+    })
+    .unknown(true);
 
 // Update Book id
 const updateBookSchema = joi
@@ -33,4 +42,12 @@ const updateBookSchema = joi
         }),
     })
     .unknown(true);
-module.exports = { addBookSchema, getBookSchema, updateBookSchema };
+// Get the end - use schema.
+const deleteBookSchema = joi
+    .object({
+        params: joi.object({
+            bookId: joi.string().strict().trim().required(),
+        }),
+    })
+    .unknown(true);
+module.exports = { addBookSchema, getBookSchema, updateBookSchema, deleteBookSchema, getBooksSchema };

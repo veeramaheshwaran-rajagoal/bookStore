@@ -13,12 +13,18 @@ router.get(
     validate(bookSchema.getBookSchema),
     bookController.getBook,
 );
+//route for get all books
+router.get('/getBooks', authentication, validate(bookSchema.getBooksSchema), bookController.getBooks);
 // route for update book
 router.put(
     '/updateBook/:bookId', authentication, authorization('user'),
     validate(bookSchema.updateBookSchema),
     bookController.updateBook,
 );
-//route for get all books
-router.get('/getBooks', authentication, bookController.getBooks);
+// route for delete book
+router.delete(
+    '/deleteBook/:bookId', authentication, authorization('user'),
+    validate(bookSchema.deleteBookSchema),
+    bookController.updateBook,
+);
 module.exports = router;

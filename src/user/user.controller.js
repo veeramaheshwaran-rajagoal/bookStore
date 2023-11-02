@@ -1,5 +1,4 @@
 const userService = require('./user.service');
-const constants = require('../../utils/constants');
 const {
     sendResponse,
     errorHandler,
@@ -26,7 +25,6 @@ const login = async (req, res) => {
         const originalPassword = await decryptPassword(password, user.password);
         if (!originalPassword)
             return sendResponse(res, false, 400, 'Please enter a valid password.');
-        console.log(user);
         if (user.roleType !== type) return sendResponse(res, false, 400, 'Invalid user id.');
         if (!user.isActive) return sendResponse(res, false, 400, 'Account deactivated.');
         const userToken = await userService.getUserToken(user);
@@ -35,8 +33,8 @@ const login = async (req, res) => {
         return errorHandler(error, res);
     }
 };
-//controller for add relationship manager
-const addSubAdmin = async (req, res) => {
+//controller for add user by admin user
+const addUser = async (req, res) => {
     try {
         const { body: data, userId } = req;
         const user = await userService.getUser(userId.toString());
@@ -63,7 +61,7 @@ const getusers = async (req, res) => {
             query: { pageNo, limit, role },
         } = req;
         const subAdmins = await userService.getusers(pageNo, limit, role, userId);
-        if (!subAdmins) return sendResponse(res, false, 200, 'Sub admin not available.');
+        if (!subAdmins) return sendResponse(res, false, 400, 'users not available.');
         return sendResponse(res, true, 200, 'users Available.', subAdmins);
     } catch (error) {
         return errorHandler(error, res);
@@ -73,46 +71,25 @@ const getusers = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const {
-            body: data,
-            params: { adminId },
+            body: data, userId
         } = req;
-        const subAdmin = await userService.checkUserById(adminId);
-        if (!subAdmin) return sendResponse(res, false, 200, 'admin not available.');
-        const userEmail = await userService.getUserByEmail(data.email, adminId);
+        const subAdmin = await userService.getUser(userId);
+        if (!subAdmin) return sendResponse(res, false, 200, 'user not available.');
+        const userEmail = await userService.getUserByEmail(data.email, userId);
         if (userEmail) return sendResponse(res, false, 409, 'User email already exist.');
         const userPhoneNumber = await userService.getUserByPhoneNumber(
             data.phoneNumber,
-            adminId,
+            userId,
         );
         if (userPhoneNumber && data.phoneNumber)
             return sendResponse(res, false, 409, 'Phone number already exist.');
         let message = `${subAdmin.userType} updated successfully.`;
         message =
             `${subAdmin.roleType} updated successfully.`;
-        await userService.updateUser(adminId, data);
+        await userService.updateUser(userId, data);
         return sendResponse(res, true, 200, message);
     } catch (error) {
         console.log(error);
-        return errorHandler(error, res);
-    }
-};
-//controller for update sub admin status
-const updateSubAdminStatus = async (req, res) => {
-    try {
-        const {
-            body: data,
-            params: { subAdminId },
-            userId,
-        } = req;
-        const subAdmin = await userService.checkUserById(subAdminId);
-        if (!subAdmin) return sendResponse(res, false, 200, 'Sub admin not available.');
-        const message =
-            data.isActive && data.isActive === true
-                ? 'User activated successfully.'
-                : 'User deactivated successfully.';
-        await userService.updateUser(subAdminId, data);
-        return sendResponse(res, true, 200, message);
-    } catch (error) {
         return errorHandler(error, res);
     }
 };
@@ -121,7 +98,7 @@ const updatePassword = async (req, res) => {
     try {
         const { body: data, userId } = req;
         const user = await userService.getUser(userId);
-        if (!user) return sendResponse(res, false, 200, 'SubAdmin not available.');
+        if (!user) return sendResponse(res, false, 200, 'user not available.');
         const userPassword = await decryptPassword(data.password, user.password);
         if (userPassword) return sendResponse(res, false, 409, 'Password already exist.');
         const newUserpassword = await encryptPassword(data.password);
@@ -138,9 +115,9 @@ const getUser = async (req, res) => {
         if (Object.keys(req.query).length !== 0)
             return sendResponse(res, false, 404, 'Url not found.');
         const {
-            userId,
+            userId, params: { id }
         } = req;
-        const user = await userService.getUserWithOptions({ _id: userId }, {});
+        const user = await userService.getUserWithOptions({ _id: id ? id : userId }, {});
         if (!user) return sendResponse(res, false, 200, 'User not available');
         return sendResponse(res, true, 200, 'User available', user);
     } catch (error) {
@@ -164,13 +141,25 @@ const userSignup = async (req, res) => {
         return errorHandler(error, res);
     }
 };
+//controller for delete user
+const deleteUser = async (req, res) => {
+    try {
+        const { params: { userId }, body: { isActive } } = req;
+        const user = await userService.getUser(userId);
+        if (!user) return sendResponse(res, false, 200, 'user not available.');;
+        await userService.updateUser(userId, { isActive: isActive });
+        return sendResponse(res, true, 200, 'User Deactivated successfully.');
+    } catch (error) {
+        return errorHandler(error, res);
+    }
+};
 module.exports = {
     login,
-    addSubAdmin,
+    addUser,
     getusers,
     updateUser,
-    updateSubAdminStatus,
     updatePassword,
     getUser,
-    userSignup
+    userSignup,
+    deleteUser
 };

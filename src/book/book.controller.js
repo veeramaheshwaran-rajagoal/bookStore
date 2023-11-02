@@ -35,7 +35,7 @@ const getBook = async (req, res) => {
 // Get a list of available books.
 const getBooks = async (req, res) => {
     const {
-        query: { type }, userId
+        query: { type, userId }
     } = req;
     const books = await bookService.getBooks({}, type, userId);
     if (books.length === 0) return sendResponse(res, false, 400, 'books not available.', []);
@@ -56,4 +56,18 @@ const updateBook = async (req, res) => {
         errorHandler(error, res);
     }
 };
-module.exports = { addBook, getBook, getBooks, updateBook };
+// Delete the book for the given ID.
+const deleteBook = async (req, res) => {
+    try {
+        const {
+            params: { bookId }, userId
+        } = req;
+        const book = await bookService.getBook({ _id: bookId, userId: userId });
+        if (!book) return sendResponse(res, false, 400, 'book not available.');
+        await bookService.deleteBook(bookId);
+        return sendResponse(res, true, 200, 'book deleted successfully.');
+    } catch (error) {
+        errorHandler(error, res);
+    }
+};
+module.exports = { addBook, getBook, getBooks, updateBook, deleteBook };

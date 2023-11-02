@@ -1,5 +1,5 @@
 const bookModel = require('../models/book');
-const { createDocument, updateDocument, getDocument } = require("../../service/common.services")
+const { createDocument } = require("../../service/common.services")
 //service for add enduse
 const addBook = async (data) => {
     return createDocument(bookModel, data)
@@ -11,7 +11,10 @@ const getBook = async (condition, projection) => {
 };
 //service for get all end uses
 const getBooks = async (projection, type, userId) => {
-    const condition = { isActive: true, userId: userId };
+    const condition = { isActive: true };
+    if (userId) {
+        condition.userId = userId
+    }
     if (type) {
         condition.type = type;
     }
@@ -23,4 +26,9 @@ const updateBook = async (filterData, updateData) => {
     const endUse = await bookModel.updateOne(filterData, updateData);
     return endUse;
 };
-module.exports = { addBook, getBook, getBooks, updateBook };
+//service for delete book
+const deleteBook = async (id) => {
+    const endUse = await bookModel.findByIdAndDelete(id);
+    return endUse;
+};
+module.exports = { addBook, getBook, getBooks, updateBook, deleteBook };

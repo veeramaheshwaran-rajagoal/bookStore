@@ -21,7 +21,7 @@ const adminLoginSchema = joi
     })
     .unknown(true);
 //validation schema for add admin
-const addSubAdminSchema = joi
+const addUserSchema = joi
     .object({
         body: joi.object({
             name: joi
@@ -83,9 +83,9 @@ const updateUserSchema = joi
                 .error(new Error('Valid phone number only allowed')),
             roleType: joi.string().strict().trim().optional(),
         }),
-        params: joi.object({
-            adminId: joi.string().strict().trim().required(),
-        }),
+        params: {
+            id: joi.string().optional(),
+        }
     })
     .unknown(true);
 //validation schema for update user password
@@ -102,7 +102,7 @@ const getusersSchema = joi
         query: joi.object({
             pageNo: joi.number().optional(),
             limit: joi.number().optional(),
-            role: joi.string().strict().trim().optional(),
+            role: joi.string().strict().trim().valid('admin', 'user').optional(),
         }),
     })
     .unknown(true);
@@ -142,11 +142,23 @@ const userSignupValidationSchema = joi
         }),
     })
     .unknown(true);
+//validation schema for delete user
+const deleteUserSchema = joi
+    .object({
+        params: {
+            userId: joi.string().required(),
+        },
+        body: {
+            isActive: joi.boolean().required(),
+        }
+    })
+    .unknown(true);
 module.exports = {
     adminLoginSchema,
-    addSubAdminSchema,
+    addUserSchema,
     updateUserSchema,
     updatePasswordSchema,
     getusersSchema,
     userSignupValidationSchema,
+    deleteUserSchema
 };
