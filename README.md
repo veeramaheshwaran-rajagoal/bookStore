@@ -18,6 +18,12 @@ git clone https://github.com/veeramaheshwaran-rajagoal/book-store.git
 cd your-nodejs-api
 ```
 
+3.Set the environment variables:
+
+```bash
+cp .env
+```
+
 3. Install dependencies:
 ```bash
 npm install
