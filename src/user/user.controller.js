@@ -147,7 +147,7 @@ const deleteUser = async (req, res) => {
         const user = await userService.getUser(userId);
         if (!user) return sendResponse(res, false, 200, 'user not available.');;
         await userService.updateUser(userId, { isActive: isActive });
-        return sendResponse(res, true, 200, 'User Deactivated successfully.');
+        return sendResponse(res, true, 200, !isActive ? 'User Deactivated successfully.' : 'User activated successfully.');
     } catch (error) {
         return errorHandler(error, res);
     }
