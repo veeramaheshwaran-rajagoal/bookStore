@@ -1,6 +1,6 @@
 # BOOK-STORE REST API
 
-This is a simple Node.js application that provides a RESTful API for user who wants to add book include operations of create ,read,update,delete and user signup,update details ,delete user,get allusers,create user
+This is a simple Node.js application that provides a RESTful API for storing and retrieving book details
 
 ## Prerequisites
 - Node.js and npm installed on your system.

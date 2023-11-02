@@ -89,7 +89,6 @@ const updateUser = async (req, res) => {
         await userService.updateUser(userId, data);
         return sendResponse(res, true, 200, message);
     } catch (error) {
-        console.log(error);
         return errorHandler(error, res);
     }
 };
